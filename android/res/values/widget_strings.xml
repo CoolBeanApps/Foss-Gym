@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_dashboard_description">Overall rank, points, and tested muscle coverage.</string>
+    <string name="widget_stats_description">Your three highest-rated exercise scores.</string>
+    <string name="widget_body_description">Current weight, BMI, and body-fat snapshot.</string>
+    <string name="widget_workout_description">One workout plan with its exercise list.</string>
+</resources>

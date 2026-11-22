@@ -1,0 +1,17 @@
+{
+  "name": "foss-gym",
+  "version": "1.24.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "prebuild": "node scripts/build-native.mjs && node scripts/prepare-nitron.mjs",
+    "build": "nitron build",
+    "test": "node test/core.test.cjs && node test/ui.test.cjs"
+  },
+  "dependencies": {
+    "nitron": "1.3.0"
+  },
+  "devDependencies": {
+    "jsdom": "26.1.0"
+  }
+}

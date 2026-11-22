@@ -1,0 +1,1468 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+    <meta name="theme-color" content="#0B0E0C" />
+    <meta name="color-scheme" content="dark" />
+    <title>Foss Gym</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell" id="appShell">
+      <header class="topbar">
+        <div class="topbar-brand-zone">
+          <div class="brand" aria-label="Foss Gym">
+            <span class="brand-mark" data-app-logo>F</span>
+            <span class="brand-name" data-app-title>FOSS GYM</span>
+          </div>
+        </div>
+        <div class="topbar-actions">
+          <button class="icon-button" id="infoButton" type="button" aria-label="About strength scores">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.01"/></svg>
+          </button>
+          <button class="icon-button" id="settingsButton" type="button" aria-label="Open settings">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 00-2 2v.18a2 2 0 01-1 1.73l-.43.25a2 2 0 01-2 0l-.15-.08a2 2 0 00-2.73.73l-.22.38a2 2 0 00.73 2.73l.15.09a2 2 0 011 1.74v.5a2 2 0 01-1 1.74l-.15.09a2 2 0 00-.73 2.73l.22.38a2 2 0 002.73.73l.15-.08a2 2 0 012 0l.43.25a2 2 0 011 1.73V20a2 2 0 002 2h.44a2 2 0 002-2v-.18a2 2 0 011-1.73l.43-.25a2 2 0 012 0l.15.08a2 2 0 002.73-.73l.22-.38a2 2 0 00-.73-2.73l-.15-.09a2 2 0 01-1-1.74v-.5a2 2 0 011-1.74l.15-.09a2 2 0 00.73-2.73l-.22-.38a2 2 0 00-2.73-.73l-.15.08a2 2 0 01-2 0l-.43-.25a2 2 0 01-1-1.73V4a2 2 0 00-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+      </header>
+
+      <aside class="donation-reminder hidden" id="donationReminder" role="status" aria-live="polite">
+        <button class="donation-reminder-message" id="donationReminderButton" type="button">
+          <span>We run on donations, tap here to donate!</span>
+          <strong>Donate</strong>
+        </button>
+        <button class="donation-reminder-close" id="donationReminderClose" type="button" aria-label="Dismiss donation reminder">&#215;</button>
+      </aside>
+
+      <main class="main-content">
+        <section class="page active" data-page="strength" id="strengthPage">
+          <div class="page-heading">
+            <div>
+              <p class="eyebrow">YOUR STRENGTH</p>
+              <h1>Muscle map</h1>
+            </div>
+            <div class="coverage-pill" id="coveragePill">0 / 15 tested</div>
+          </div>
+
+          <button class="score-card" id="overallScoreCard" type="button" aria-label="Overall strength score details">
+            <div>
+              <span class="score-card-label">OVERALL RANK</span>
+              <strong id="overallScore">--</strong>
+            </div>
+            <div class="score-card-side">
+              <span id="overallTier">Add your first lift</span>
+              <small id="overallSubtext">Scores use tested muscles only</small>
+            </div>
+          </button>
+
+          <div class="heat-card">
+            <div class="heat-card-heading">
+              <div>
+                <h2>Your muscle heat map</h2>
+                <p>Color shows your best score. Gray means untested.</p>
+              </div>
+              <div class="heat-key" aria-label="Heat map scale">
+                <span class="key-dot low"></span>
+                <span class="key-dot mid"></span>
+                <span class="key-dot high"></span>
+              </div>
+            </div>
+
+            <div class="body-map atlas-map" id="bodyMap">
+              <div class="body-view">
+                <svg class="human anatomical-human" viewBox="0 0 300 700" role="img" aria-label="Front muscle heat map with separate left and right muscles">
+                  <g class="atlas-skin atlas-body">
+                    <path d="M150 14c-22 0-34 16-33 40 1 21 9 35 22 43v17h22V97c13-8 21-22 22-43 1-24-11-40-33-40z" />
+                    <path d="M118 45c-7-2-9 5-6 14 2 7 6 11 10 8zM182 45c7-2 9 5 6 14-2 7-6 11-10 8z" />
+                    <path d="M138 108c-11 10-26 15-45 20-16 5-23 18-21 40l14 106c4 35 15 60 34 77l18-13 12 5 12-5 18 13c19-17 30-42 34-77l14-106c2-22-5-35-21-40-19-5-34-10-45-20-2 11-6 18-12 23-6-5-10-12-12-23z" />
+                    <path d="M96 130c-21-5-37 7-44 31-7 27-6 56-12 84l-14 78c-4 23 4 38 22 42l17-12 10-78c4-28 12-56 20-80l17-49z" />
+                    <path d="M204 130c21-5 37 7 44 31 7 27 6 56 12 84l14 78c4 23-4 38-22 42l-17-12-10-78c-4-28-12-56-20-80l-17-49z" />
+                    <path d="M35 353c-11 6-14 18-10 29l8 17c2 5 7 3 6-2l-3-13 7 20c2 5 8 2 6-3l-5-20 9 18c2 5 8 1 6-4l-7-20 10 15c3 4 8 0 5-5l-9-18-13-14z" />
+                    <path d="M265 353c11 6 14 18 10 29l-8 17c-2 5-7 3-6-2l3-13-7 20c-2 5-8 2-6-3l5-20-9 18c-2 5-8 1-6-4l7-20-10 15c-3 4-8 0-5-5l9-18 13-14z" />
+                    <path d="M123 342c-20 12-30 34-31 65-1 39 9 80 12 117l-6 107c-1 21 8 38 23 46l22-20 6-121 1-133-10-54z" />
+                    <path d="M177 342c20 12 30 34 31 65 1 39-9 80-12 117l6 107c1 21-8 38-23 46l-22-20-6-121-1-133 10-54z" />
+                    <path d="M119 652l-19 37c-4 8 1 10 10 10h40l-3-18-13-26zM181 652l19 37c4 8-1 10-10 10h-40l3-18 13-26z" />
+                  </g>
+                  <g class="muscle-atlas" data-view="front">
+                    <path class="muscle" data-group="traps" data-side="left" d="M139 103c-4 14-15 21-29 27l28 27 11-34z" />
+                    <path class="muscle" data-group="traps" data-side="right" d="M161 103c4 14 15 21 29 27l-28 27-11-34z" />
+                    <path class="muscle" data-group="shoulders" data-side="left" d="M109 128c-22-3-39 10-47 32-5 17 3 30 21 34l21-12 14-39z" />
+                    <path class="muscle" data-group="shoulders" data-side="right" d="M191 128c22-3 39 10 47 32 5 17-3 30-21 34l-21-12-14-39z" />
+                    <path class="muscle" data-group="chest" data-side="left" d="M140 143c-19-10-37-3-46 13l-7 30c10 21 30 28 53 19l9-15v-43z" />
+                    <path class="muscle" data-group="chest" data-side="right" d="M160 143c19-10 37-3 46 13l7 30c-10 21-30 28-53 19l-9-15v-43z" />
+                    <path class="muscle" data-group="biceps" data-side="left" d="M72 196c-12 8-16 24-13 43l6 37c3 16 16 21 28 8l9-56c0-20-12-34-30-32z" />
+                    <path class="muscle" data-group="biceps" data-side="right" d="M228 196c12 8 16 24 13 43l-6 37c-3 16-16 21-28 8l-9-56c0-20 12-34 30-32z" />
+                    <path class="muscle" data-group="forearms" data-side="left" d="M63 274c-10 7-14 20-15 35l-7 47 19 12 13-60 15-29-17-6-10 28z" />
+                    <path class="muscle" data-group="forearms" data-side="right" d="M237 274c10 7 14 20 15 35l7 47-19 12-13-60-15-29 17-6 10 28z" />
+                    <path class="muscle" data-group="core" data-side="left" d="M129 210h19v34h-23zM124 248h24v35h-27zM121 287h27v36l-29 8zM128 334l20-7v38l-16 7z" />
+                    <path class="muscle" data-group="core" data-side="right" d="M152 210h19l4 34h-23zM152 248h24l3 35h-27zM152 287h27l2 44-29-8zM152 327l20 7-4 38-16-7z" />
+                    <path class="muscle" data-group="obliques" data-side="left" d="M101 198l25 13-6 43-20 22 1-38zM99 279l20-20-2 55-17 31-9-20z" />
+                    <path class="muscle" data-group="obliques" data-side="right" d="M199 198l-25 13 6 43 20 22-1-38zM201 279l-20-20 2 55 17 31 9-20z" />
+                    <path class="muscle" data-group="quads" data-side="left" d="M111 362c-20 15-25 52-20 91l16 78 30-28 9-108c-4-26-18-38-35-33zM132 358c11-2 18 9 20 29l-4 119-18 40-18-17 17-107z" />
+                    <path class="muscle" data-group="quads" data-side="right" d="M189 362c20 15 25 52 20 91l-16 78-30-28-9-108c4-26 18-38 35-33zM168 358c-11-2-18 9-20 29l4 119 18 40 18-17-17-107z" />
+                    <path class="muscle" data-group="adductors" data-side="left" d="M141 359l8 11-3 128-17-8 8-91z" />
+                    <path class="muscle" data-group="adductors" data-side="right" d="M159 359l-8 11 3 128 17-8-8-91z" />
+                    <path class="muscle" data-group="calves" data-side="left" d="M113 530c-12 14-14 39-11 68l9 56 17 22 12-98c-2-29-14-51-27-48zM140 534l7 8-4 113-14 21 9-96z" />
+                    <path class="muscle" data-group="calves" data-side="right" d="M187 530c12 14 14 39 11 68l-9 56-17 22-12-98c2-29 14-51 27-48zM160 534l-7 8 4 113 14 21-9-96z" />
+                  </g>
+                  <g class="atlas-detail">
+                    <path d="M150 118v258M89 185c18 22 43 28 61 8M211 185c-18 22-43 28-61 8M119 244h62M117 283h66M116 325h68M116 358c22 14 46 14 68 0M100 527c18 8 34 8 48 0M200 527c-18 8-34 8-48 0" />
+                    <path d="M137 50h9M154 50h9M143 74c5 3 9 3 14 0M141 85c6 4 12 4 18 0" />
+                  </g>
+                </svg>
+                <span>FRONT</span>
+              </div>
+              <div class="body-view">
+                <svg class="human anatomical-human" viewBox="0 0 300 700" role="img" aria-label="Back muscle heat map with separate left and right muscles">
+                  <g class="atlas-skin atlas-body">
+                    <path d="M150 14c-22 0-34 16-33 40 1 21 9 35 22 43v17h22V97c13-8 21-22 22-43 1-24-11-40-33-40z" />
+                    <path d="M118 45c-7-2-9 5-6 14 2 7 6 11 10 8zM182 45c7-2 9 5 6 14-2 7-6 11-10 8z" />
+                    <path d="M138 108c-11 10-26 15-45 20-16 5-23 18-21 40l14 106c4 35 15 60 34 77l18-13 12 5 12-5 18 13c19-17 30-42 34-77l14-106c2-22-5-35-21-40-19-5-34-10-45-20-2 11-6 18-12 23-6-5-10-12-12-23z" />
+                    <path d="M96 130c-21-5-37 7-44 31-7 27-6 56-12 84l-14 78c-4 23 4 38 22 42l17-12 10-78c4-28 12-56 20-80l17-49z" />
+                    <path d="M204 130c21-5 37 7 44 31 7 27 6 56 12 84l14 78c4 23-4 38-22 42l-17-12-10-78c-4-28-12-56-20-80l-17-49z" />
+                    <path d="M35 353c-11 6-14 18-10 29l8 17c2 5 7 3 6-2l-3-13 7 20c2 5 8 2 6-3l-5-20 9 18c2 5 8 1 6-4l-7-20 10 15c3 4 8 0 5-5l-9-18-13-14z" />
+                    <path d="M265 353c11 6 14 18 10 29l-8 17c-2 5-7 3-6-2l3-13-7 20c-2 5-8 2-6-3l5-20-9 18c-2 5-8 1-6-4l7-20-10 15c-3 4-8 0-5-5l9-18 13-14z" />
+                    <path d="M123 342c-20 12-30 34-31 65-1 39 9 80 12 117l-6 107c-1 21 8 38 23 46l22-20 6-121 1-133-10-54z" />
+                    <path d="M177 342c20 12 30 34 31 65 1 39-9 80-12 117l6 107c1 21-8 38-23 46l-22-20-6-121-1-133 10-54z" />
+                    <path d="M119 652l-19 37c-4 8 1 10 10 10h40l-3-18-13-26zM181 652l19 37c4 8-1 10-10 10h-40l3-18 13-26z" />
+                  </g>
+                  <g class="muscle-atlas" data-view="back">
+                    <path class="muscle" data-group="traps" data-side="left" d="M139 100c-5 16-20 23-39 30l37 56 12-15v-52z" />
+                    <path class="muscle" data-group="traps" data-side="right" d="M161 100c5 16 20 23 39 30l-37 56-12-15v-52z" />
+                    <path class="muscle" data-group="shoulders" data-side="left" d="M109 128c-22-3-39 10-47 32-5 17 3 30 21 34l21-12 14-39z" />
+                    <path class="muscle" data-group="shoulders" data-side="right" d="M191 128c22-3 39 10 47 32 5 17-3 30-21 34l-21-12-14-39z" />
+                    <path class="muscle" data-group="back" data-side="left" d="M101 156c-15 12-21 32-20 59l6 84 35 38 24-59-2-94z" />
+                    <path class="muscle" data-group="back" data-side="right" d="M199 156c15 12 21 32 20 59l-6 84-35 38-24-59 2-94z" />
+                    <path class="muscle" data-group="triceps" data-side="left" d="M72 196c-12 8-15 24-12 43l6 37c3 14 14 18 24 7l9-55c0-20-11-34-27-32z" />
+                    <path class="muscle" data-group="triceps" data-side="right" d="M228 196c12 8 15 24 12 43l-6 37c-3 14-14 18-24 7l-9-55c0-20 11-34 27-32z" />
+                    <path class="muscle" data-group="forearms" data-side="left" d="M63 274c-10 7-14 20-15 35l-7 47 19 12 13-60 15-29-17-6-10 28z" />
+                    <path class="muscle" data-group="forearms" data-side="right" d="M237 274c10 7 14 20 15 35l7 47-19 12-13-60-15-29 17-6 10 28z" />
+                    <path class="muscle" data-group="lower-back" data-side="left" d="M117 291l31-15v91l-36-13-17-33z" />
+                    <path class="muscle" data-group="lower-back" data-side="right" d="M183 291l-31-15v91l36-13 17-33z" />
+                    <path class="muscle" data-group="glutes" data-side="left" d="M109 352c-23 5-33 24-28 51l13 47c11 23 34 25 54 6v-73c-7-21-21-33-39-31z" />
+                    <path class="muscle" data-group="glutes" data-side="right" d="M191 352c23 5 33 24 28 51l-13 47c-11 23-34 25-54 6v-73c7-21 21-33 39-31z" />
+                    <path class="muscle" data-group="hamstrings" data-side="left" d="M108 458c-15 16-18 43-12 78l13 69 24-29 11-94c-6-22-22-32-36-24zM143 465l6 7-3 104-14 28 8-96z" />
+                    <path class="muscle" data-group="hamstrings" data-side="right" d="M192 458c15 16 18 43 12 78l-13 69-24-29-11-94c6-22 22-32 36-24zM157 465l-6 7 3 104 14 28-8-96z" />
+                    <path class="muscle" data-group="adductors" data-side="left" d="M141 456l8 10-3 99-17-9 9-78z" />
+                    <path class="muscle" data-group="adductors" data-side="right" d="M159 456l-8 10 3 99 17-9-9-78z" />
+                    <path class="muscle" data-group="calves" data-side="left" d="M110 590c-13 13-16 37-12 66l10 31 19-19 13-70c-5-17-18-20-30-8zM141 594l8 8-6 73-15 12 10-86z" />
+                    <path class="muscle" data-group="calves" data-side="right" d="M190 590c13 13 16 37 12 66l-10 31-19-19-13-70c5-17 18-20 30-8zM159 594l-8 8 6 73 15 12-10-86z" />
+                  </g>
+                  <g class="atlas-detail">
+                    <path d="M150 98v272M100 130l38 56M200 130l-38 56M82 300c22 23 45 33 68 30M218 300c-22 23-45 33-68 30M82 401c23-15 45-14 66 5M218 401c-23-15-45-14-66 5M92 453c20 13 39 14 56 3M208 453c-20 13-39 14-56 3M98 589c17-7 34-6 50 3M202 589c-17-7-34-6-50 3" />
+                  </g>
+                </svg>
+                <span>BACK</span>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="section-title-row">
+            <h2>All muscle groups</h2>
+            <span>Tap a card to log</span>
+          </div>
+          <div class="muscle-grid" id="muscleGrid"></div>
+        </section>
+
+        <section class="page" data-page="workouts" id="workoutsPage">
+          <div class="page-heading">
+            <div>
+              <p class="eyebrow" id="workoutsPageEyebrow">YOUR TRAINING</p>
+              <h1 id="workoutsPageTitle">Workouts</h1>
+            </div>
+            <div class="workout-heading-actions">
+              <label class="workout-location-control" id="workoutLocationControl" for="activeLocationSelect">
+                <select id="activeLocationSelect" aria-label="Active training location"></select>
+              </label>
+              <button class="small-primary" id="newPlanButton" type="button">+ Build</button>
+            </div>
+          </div>
+
+          <section id="workoutOverview">
+            <div class="section-title-row">
+              <h2>Choose workout</h2>
+              <span id="planCount">1 plan</span>
+            </div>
+            <div class="compact-filter-strip" id="workoutFilterStrip" aria-label="Workout filters">
+              <button class="active" type="button" data-workout-filter="all">All</button>
+              <button type="button" data-workout-filter="no_equipment">No equipment</button>
+              <button type="button" data-workout-filter="equipment">Equipment</button>
+              <label class="filter-select-label" for="workoutGroupFilter"><span>Muscle</span><select id="workoutGroupFilter" aria-label="Filter workouts by muscle group"></select></label>
+            </div>
+            <div class="plan-list" id="planList"></div>
+
+            <div class="section-title-row linked-heading">
+              <div><h2>Recent high scores</h2><span id="workoutRecentScoreCount">Your latest three</span></div>
+              <button class="section-link-button" id="viewAllWorkoutHighScores" type="button">View all</button>
+            </div>
+            <div class="workout-high-scores" id="workoutHighScores"></div>
+            <p class="plain-note">Saving a set updates that exercise's high score. There are no workout sessions to start or finish.</p>
+          </section>
+
+          <section class="workout-detail hidden" id="workoutDetail">
+            <button class="workout-back-button" id="clearWorkoutSelection" type="button">
+              <span aria-hidden="true">&#8592;</span> All workouts
+            </button>
+
+            <div class="active-workout-sticky" id="activeWorkoutSticky">
+              <header class="selected-workout-header">
+                <span class="selected-workout-icon" id="selectedWorkoutIcon"></span>
+                <div>
+                  <p class="eyebrow">CURRENT WORKOUT</p>
+                  <h2 id="selectedWorkoutName">Full Body</h2>
+                  <small id="selectedWorkoutMeta">Enter one good set. It saves immediately.</small>
+                </div>
+                <div class="selected-workout-actions">
+                  <button class="workout-edit-button" id="editCurrentWorkout" type="button">Edit</button>
+                  <button class="workout-timer-button" id="showCooldownTimer" type="button" aria-label="Show cooldown timer" title="Show cooldown timer">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="7"/><path d="M12 9v4l3 2M9 3h6M12 3v3"/></svg>
+                  </button>
+                </div>
+              </header>
+            </div>
+
+            <section class="selected-workout-panel" id="selectedWorkoutPanel">
+              <div class="workout-logger" id="workoutLogger"></div>
+            </section>
+
+          </section>
+
+          <section class="workout-scores-page hidden" id="workoutHighScoresPage">
+            <button class="workout-back-button" id="closeWorkoutHighScores" type="button">
+              <span aria-hidden="true">&#8592;</span> Workouts
+            </button>
+            <div class="section-title-row">
+              <h2>Exercise high scores</h2>
+              <span id="workoutHighScoreCount">0 scores</span>
+            </div>
+            <div class="workout-high-scores" id="workoutAllHighScores"></div>
+          </section>
+        </section>
+
+        <section class="page" data-page="dashboard" id="dashboardPage">
+          <div class="page-heading">
+            <div>
+              <p class="eyebrow" id="dashboardPageEyebrow">YOUR NUMBERS</p>
+              <h1 id="dashboardPageTitle">Dashboard</h1>
+            </div>
+          </div>
+
+          <section id="dashboardOverview">
+          <div class="dashboard-rank-card">
+            <div class="dashboard-rank-top">
+              <div>
+                <span>OVERALL RANK</span>
+                <strong id="dashboardRankValue">--</strong>
+              </div>
+              <div>
+                <strong id="dashboardRankTitle">Log a high score</strong>
+                <small id="dashboardRankMeta">Your overall rank will appear here.</small>
+              </div>
+            </div>
+            <div class="rank-progress-track large"><span id="dashboardRankProgress"></span></div>
+            <div class="rank-progress-copy"><span id="dashboardPointProgress">0 XP</span><span id="dashboardNextRank">No rank yet</span></div>
+          </div>
+
+          <div class="dashboard-stat-grid">
+            <div><span>HIGH SCORES</span><strong id="dashboardHighScoreTotal">0</strong></div>
+            <div><span>MUSCLES TESTED</span><strong id="dashboardCoverage">0/15</strong></div>
+            <div><span>BODY WEIGHT</span><strong id="dashboardWeight">--</strong></div>
+            <div><span id="dashboardPointsLabel">XP</span><strong id="dashboardPoints">0 XP</strong></div>
+          </div>
+
+          <div class="dashboard-chart-card">
+            <div class="dashboard-chart-heading">
+              <div><span>TREND</span><h2 id="dashboardChartTitle">Strength progression</h2></div>
+              <div class="segmented compact" id="dashboardChartTabs">
+                <button class="active" type="button" data-chart-mode="strength">Strength</button>
+                <button type="button" data-chart-mode="weight">Weight</button>
+              </div>
+            </div>
+            <canvas id="dashboardChart" width="640" height="250" aria-label="Strength or body weight trend"></canvas>
+            <div class="chart-empty" id="dashboardChartEmpty">Set two high scores to see progression.</div>
+          </div>
+
+          <div class="section-title-row linked-heading">
+            <div><h2>Best high scores</h2><span>Highest rated first</span></div>
+            <button class="section-link-button" id="viewAllDashboardScores" type="button">View all</button>
+          </div>
+          <div class="dashboard-high-scores" id="dashboardHighScores"></div>
+          </section>
+
+          <section class="dashboard-stats-page hidden" id="dashboardAllStatsPage">
+            <button class="workout-back-button" id="closeDashboardScores" type="button">
+              <span aria-hidden="true">&#8592;</span> Dashboard
+            </button>
+            <div class="section-title-row">
+              <h2>All high scores</h2>
+              <span id="dashboardAllScoreCount">0 scores</span>
+            </div>
+            <div class="dashboard-high-scores grouped-scores" id="dashboardAllHighScores"></div>
+          </section>
+        </section>
+
+        <section class="page" data-page="cardio" id="cardioPage">
+          <div class="page-heading">
+            <div>
+              <p class="eyebrow">YOUR ENGINE</p>
+              <h1>Cardio</h1>
+            </div>
+            <button class="small-primary" id="focusCardioLoggerButton" type="button">+ Log</button>
+          </div>
+
+          <section class="cardio-log-card" id="cardioLogger">
+            <div class="section-title-row"><h2>Choose cardio</h2><span>Tap an activity</span></div>
+            <div class="exercise-chips cardio-activity-tabs" id="cardioActivityTabs" aria-label="Cardio activities"></div>
+            <select class="select-input hidden" id="cardioActivitySelect" aria-hidden="true" tabindex="-1"></select>
+            <div class="cardio-selection-summary">
+              <span><small>PERSONAL RECORD</small><strong id="cardioLoggerBest">--</strong></span>
+              <button id="openCardioGoalFromLogger" type="button">Set goal</button>
+            </div>
+            <div class="cardio-value-fields" id="cardioValueFields"></div>
+            <button class="primary-button" id="saveCardioScoreButton" type="button">Save cardio score</button>
+          </section>
+
+          <div class="section-title-row linked-heading cardio-history-heading">
+            <div><h2>Recent cardio</h2><span id="cardioHistoryCount">0 scores</span></div>
+          </div>
+          <div class="cardio-history-list" id="cardioHistoryList"></div>
+          <p class="privacy-note">Cardio scores stay on this device with the rest of your Foss Gym data.</p>
+        </section>
+
+        <section class="page" data-page="body" id="bodyPage">
+          <div class="page-heading">
+            <div>
+              <p class="eyebrow">YOUR BODY</p>
+              <h1>Measurements</h1>
+            </div>
+            <button class="small-primary" id="logMeasurementsButton" type="button">+ Log</button>
+          </div>
+
+          <div class="weight-card" id="bodyWeightCard">
+            <div class="weight-card-top">
+              <button class="current-weight-view-button" id="currentWeightViewButton" type="button" aria-label="Change weight graph view">
+                <span>CURRENT WEIGHT</span>
+                <div><strong id="currentBodyWeight">--</strong> <em id="bodyWeightUnit">lb</em></div>
+                <small id="weightViewTapHint">Tap for trajectory</small>
+              </button>
+              <div class="weight-card-actions">
+                <div class="change-pill neutral" id="bodyWeightChange">No change</div>
+                <button class="weight-display-edit" id="openMeasurementDisplayButton" type="button" aria-label="Edit weight graph display">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10M14 4v6M6 14v6"/></svg>
+                </button>
+              </div>
+            </div>
+            <div class="weight-chart-copy"><strong id="weightChartTitle">Past 7 days</strong><small id="weightChartDescription">Your most recent week of weigh-ins</small></div>
+            <div class="weight-chart-frame">
+              <canvas id="weightChart" width="640" height="250" aria-label="Body weight history chart"></canvas>
+              <div class="chart-empty" id="chartEmpty">Log weight twice to see a trend.</div>
+            </div>
+            <div class="weight-axis-copy" id="weightAxisCopy"><span id="weightYAxisLabel">WEIGHT (LB)</span><span id="weightXAxisLabel">DATE</span></div>
+            <div class="weight-date-range" id="weightDateRange"><span id="weightStartDate">START --</span><span id="weightEndDate">END --</span></div>
+            <div class="weight-trajectory-legend hidden" id="weightTrajectoryLegend"><span><i class="goal-line"></i>Needed to goal</span><span><i class="trend-line"></i>Current trajectory</span></div>
+            <div class="weight-metric-grid" id="weightMetricGrid"></div>
+            <button class="weight-goal-shortcut" id="openWeightGoalFromBody" type="button">Set a weight goal</button>
+          </div>
+
+          <div class="cardio-record-card cardio-trend-card" id="bodyCardioTrendCard">
+            <div class="cardio-chart-heading">
+              <div><span>PERSONAL RECORD</span><strong id="cardioRecordValue">--</strong><small id="cardioRecordMeta">Log your first run</small></div>
+              <div class="segmented compact cardio-chart-tabs" id="cardioChartTabs">
+                <button class="active" type="button" data-cardio-chart="longest-run">Longest run</button>
+                <button type="button" data-cardio-chart="fastest-mile">Fastest mile</button>
+              </div>
+            </div>
+            <div class="cardio-chart-frame">
+              <canvas id="cardioChart" width="640" height="250" aria-label="Cardio score history"></canvas>
+              <div class="chart-empty" id="cardioChartEmpty">Log two scores to see a trend.</div>
+            </div>
+            <div class="cardio-goal-row"><span id="cardioGoalSummary">No cardio goal set</span><button id="openCardioGoalButton" type="button">Set goal</button></div>
+          </div>
+
+          <div class="body-indicator-grid">
+            <div class="body-indicator-card">
+              <span>BMI</span>
+              <strong id="bmiValue">--</strong>
+              <small id="bmiCategory">Add your height</small>
+            </div>
+            <div class="body-indicator-card">
+              <span>BODY FAT</span>
+              <strong id="bodyFatValue">--</strong>
+              <small id="bodyFatCategory">Add tape measurements</small>
+            </div>
+          </div>
+          <button class="body-method-button" id="bodyMethodButton" type="button">How BMI and the tape estimate work</button>
+
+          <div class="section-title-row measurement-latest-heading">
+            <h2>Latest</h2>
+            <span id="measurementDate">No entry</span>
+          </div>
+          <p class="measurement-hint">Tap or hold any card to update only that measurement.</p>
+          <div class="measurement-grid" id="measurementGrid"></div>
+
+          <div class="section-title-row linked-heading measurement-history-heading">
+            <div><h2>Measurement history</h2><span id="measurementHistoryCount">0 entries</span></div>
+            <button class="section-link-button" id="viewAllMeasurementsButton" type="button">View all</button>
+          </div>
+          <div class="measurement-history-list" id="measurementHistoryPreview"></div>
+
+          <p class="privacy-note">No account. No ads. Your data stays on this device.</p>
+        </section>
+      </main>
+
+      <section class="cooldown-dock" id="cooldownDock" aria-label="Cooldown timer">
+        <button class="cooldown-readout" id="restTimerToggle" type="button" aria-label="Start cooldown timer">
+          <span class="cooldown-word">Cooldown</span>
+          <strong id="restTimerDisplay">60</strong>
+          <span class="timer-word">Timer</span>
+          <span class="visually-hidden" id="restTimerStatus">TAP TO START</span>
+        </button>
+        <div class="cooldown-edit-controls" id="cooldownEditControls" aria-label="Cooldown timer controls">
+          <button type="button" data-cooldown-seconds="30">30</button>
+          <button type="button" data-cooldown-seconds="60">60</button>
+          <button type="button" data-cooldown-seconds="90">90</button>
+          <button class="cooldown-close" id="closeCooldownTimer" type="button" aria-label="Hide cooldown timer">&#215;</button>
+        </div>
+      </section>
+
+      <nav class="bottom-nav" aria-label="Main navigation">
+        <button class="nav-item active" type="button" data-tab="strength">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4v16M16 4v16M4 8v8M20 8v8M8 12h8"/></svg>
+          <span>Strength</span>
+        </button>
+        <button class="nav-item" type="button" data-tab="workouts">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14v16H5zM8 8h8M8 12h8M8 16h5"/></svg>
+          <span>Workouts</span>
+        </button>
+        <button class="nav-item" type="button" data-tab="cardio">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 15h3l2-6 4 10 2-6h5M5 6h14M7 6V4M17 6V4"/></svg>
+          <span>Cardio</span>
+        </button>
+        <button class="nav-item" type="button" data-tab="dashboard">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V9M10 19V4M16 19v-7M22 19H2"/></svg>
+          <span>Stats</span>
+        </button>
+        <button class="nav-item" type="button" data-tab="body">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v3M6.5 9.5l2 2M17.5 9.5l-2 2M4 16h16M6 16a6 6 0 0112 0"/></svg>
+          <span>Body</span>
+        </button>
+      </nav>
+    </div>
+
+    <div class="modal setup-modal" id="setupModal" aria-hidden="true">
+      <div class="modal-backdrop"></div>
+      <div class="setup-panel">
+        <div class="setup-logo"><span data-app-logo>F</span></div>
+        <p class="eyebrow"><span data-app-title>FOSS GYM</span> · <span id="setupStepLabel">STEP 1 OF 3</span></p>
+        <h2 id="setupTitle">Start with your profile.</h2>
+        <p class="setup-copy" id="setupCopy">These three details set your strength and body-weight comparisons.</p>
+
+        <div class="setup-step" id="setupProfileStep">
+          <label class="field-label" for="setupWeight">Body weight</label>
+          <div class="large-input-row">
+            <input id="setupWeight" type="number" inputmode="decimal" min="1" value="180" />
+            <div class="segmented input-segment" id="setupUnits">
+              <button class="active" type="button" data-value="lb">LB</button>
+              <button type="button" data-value="kg">KG</button>
+            </div>
+          </div>
+
+          <label class="field-label">Height</label>
+          <div class="setup-height-imperial" id="setupHeightImperial">
+            <label class="height-part" for="setupHeightFeet"><input id="setupHeightFeet" type="number" inputmode="numeric" min="1" max="9" value="5" /><span>FT</span></label>
+            <label class="height-part" for="setupHeightInches"><input id="setupHeightInches" type="number" inputmode="decimal" min="0" max="11.9" step="0.1" value="9" /><span>IN</span></label>
+          </div>
+          <div class="height-input-wrap hidden" id="setupHeightMetric">
+            <input id="setupHeightCm" type="number" inputmode="decimal" min="1" value="175.3" />
+            <span>CM</span>
+          </div>
+
+          <label class="field-label">Comparison profile</label>
+          <div class="segmented wide setup-standard" id="setupStandard">
+            <button class="active" type="button" data-value="male">Male</button>
+            <button type="button" data-value="female">Female</button>
+          </div>
+          <p class="field-help">This selects the reference standards used for your percentile.</p>
+
+          <button class="primary-button setup-next-button" id="setupNextButton" type="button">Next: workout locations</button>
+        </div>
+
+        <div class="setup-step hidden" id="setupLocationStep">
+          <label class="field-label">Where can you train?</label>
+          <div class="setup-location-grid" id="setupLocations" aria-label="Available training locations"></div>
+          <p class="field-help">Choose one or more. Your active location controls which exercises are available.</p>
+          <div class="setup-equipment-summaries" id="setupEquipmentSummaries"></div>
+
+          <label class="field-label">Equipment preference</label>
+          <div class="segmented wide setup-preference" id="setupEquipmentPreference">
+            <button type="button" data-value="machines">Machines</button>
+            <button type="button" data-value="free_weights">Free weights</button>
+            <button class="active" type="button" data-value="none">No preference</button>
+          </div>
+          <p class="field-help">This puts preferred exercises first. It does not hide other available options.</p>
+
+          <div class="setup-final-actions">
+            <button class="secondary-button" id="setupBackButton" type="button">Back</button>
+            <button class="primary-button" id="setupLocationNextButton" type="button">Next: ideal physique</button>
+          </div>
+        </div>
+
+        <div class="setup-step setup-physique-step hidden" id="setupPhysiqueStep">
+          <label class="field-label" for="setupPhysiqueSelect">What is your ideal physique?</label>
+          <select class="select-input setup-physique-select" id="setupPhysiqueSelect"></select>
+          <div class="setup-physique-preview">
+            <span>YOUR PROPORTIONAL TARGET</span>
+            <strong id="setupPhysiqueName">Golden Ratio / V-Taper</strong>
+            <p id="setupPhysiqueDescription">Choose a visual reference. You can change this later in Settings.</p>
+          </div>
+          <p class="field-help">This only sets optional measurement targets. It never changes your strength score.</p>
+
+          <div class="setup-final-actions">
+            <button class="secondary-button" id="setupPhysiqueBackButton" type="button">Back</button>
+            <button class="primary-button" id="finishSetupButton" type="button">Start tracking</button>
+          </div>
+          <p class="tiny-note">Rankings and physique targets are estimates, not verified competition or medical results.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal sheet-modal" id="liftModal" aria-hidden="true">
+      <div class="modal-backdrop" data-close="liftModal"></div>
+      <section class="bottom-sheet tall-sheet" role="dialog" aria-modal="true" aria-labelledby="liftTitle">
+        <div class="sheet-handle"></div>
+        <header class="sheet-header">
+          <div>
+            <p class="eyebrow" id="liftGroupLabel">CHEST</p>
+            <h2 id="liftTitle">Log strength</h2>
+          </div>
+          <div class="lift-header-actions">
+            <button class="icon-button" id="liftInfoButton" type="button" aria-label="How to do this exercise" title="Exercise guide">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.01"/></svg>
+            </button>
+            <button class="icon-button" id="liftCooldownButton" type="button" aria-label="Show cooldown timer" title="Cooldown timer">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="7"/><path d="M12 9v4l3 2M9 3h6M12 3v3"/></svg>
+            </button>
+            <button class="icon-button" type="button" data-close="liftModal" aria-label="Close">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+            </button>
+          </div>
+        </header>
+
+        <div class="exercise-chips" id="liftExerciseChips"></div>
+
+        <div class="lift-visual-card">
+          <div class="exercise-art large" id="liftExerciseArt"></div>
+          <div>
+            <span id="liftBestLabel">HEAVIEST WEIGHT</span>
+            <strong id="bestOneRepMax">Not set</strong>
+            <small id="bestLiftDate">Log a hard set below</small>
+          </div>
+        </div>
+
+        <div class="world-record-card" id="worldRecordCard">
+          <span id="worldRecordLabel">WORLD RECORD STATUS</span>
+          <strong id="worldRecordValue">Not standardized</strong>
+          <small id="worldRecordCopy">Record status appears here.</small>
+        </div>
+
+        <div class="input-pair" id="liftInputPair">
+          <label id="liftWeightField">
+            <span>WEIGHT <em id="liftUnitLabel">LB</em></span>
+            <input id="liftWeightInput" type="number" inputmode="decimal" min="0" placeholder="135" />
+          </label>
+          <label>
+            <span>REPS</span>
+            <input id="liftRepsInput" type="number" inputmode="numeric" min="1" max="20" value="5" />
+          </label>
+        </div>
+
+        <div class="live-rank-card" id="liveRankCard">
+          <div class="rank-number"><strong id="livePercentile">--</strong><span id="percentileSuffix">%</span></div>
+          <div class="rank-copy">
+            <strong id="liveTier">Enter a set</strong>
+            <span id="liveOneRepMax">Your weight rank appears here.</span>
+          </div>
+        </div>
+
+        <button class="primary-button" id="saveLiftButton" type="button">Save score</button>
+        <p class="tiny-note" id="liftHelpText">Your score is the heaviest weight you actually save. Reps never inflate it.</p>
+        <div class="section-title-row score-history-heading">
+          <h3>Saved scores</h3>
+          <button class="section-link-button" id="viewAllLiftScores" type="button">View all</button>
+        </div>
+        <p class="score-history-count" id="liftScoreCount">0 saved</p>
+        <div class="score-history" id="liftScoreHistory"></div>
+
+        <div class="section-title-row rank-ladder-heading">
+          <div><h3 id="liftRankLadderTitle">Training level targets</h3><span>Exact targets for this exercise</span></div>
+        </div>
+        <div class="rank-ladder" id="liftRankLadder"></div>
+      </section>
+    </div>
+
+    <div class="modal sheet-modal" id="planModal" aria-hidden="true">
+      <div class="modal-backdrop" data-close="planModal"></div>
+      <section class="bottom-sheet full-sheet" role="dialog" aria-modal="true" aria-labelledby="planModalTitle">
+        <div class="sheet-handle"></div>
+        <header class="sheet-header sticky-sheet-header">
+          <div>
+            <p class="eyebrow">WORKOUT BUILDER</p>
+            <h2 id="planModalTitle">Build a plan</h2>
+          </div>
+          <button class="icon-button" type="button" data-close="planModal" aria-label="Close">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+          </button>
+        </header>
+
+        <label class="field-label" for="planNameInput">Plan name</label>
+        <input class="text-input" id="planNameInput" type="text" maxlength="40" placeholder="Monday workout" />
+
+        <label class="field-label">Workout icon</label>
+        <div class="plan-icon-picker" id="planIconPicker"></div>
+
+        <div class="section-title-row plan-exercises-heading">
+          <h3>Exercises</h3>
+          <span>Sets x reps</span>
+        </div>
+        <div class="plan-editor-list" id="planEditorList"></div>
+
+        <button class="secondary-button" id="addExerciseButton" type="button">+ Add exercise</button>
+        <button class="primary-button" id="savePlanButton" type="button">Save plan</button>
+        <button class="danger-link hidden" id="deletePlanButton" type="button">Delete plan</button>
+      </section>
+    </div>
+
+    <div class="modal sheet-modal" id="iconDrawModal" aria-hidden="true">
+      <div class="modal-backdrop" data-close="iconDrawModal"></div>
+      <section class="bottom-sheet icon-draw-sheet" role="dialog" aria-modal="true" aria-labelledby="iconDrawTitle">
+        <div class="sheet-handle"></div>
+        <header class="sheet-header">
+          <div>
+            <p class="eyebrow" id="iconDrawEyebrow">WORKOUT ICON</p>
+            <h2 id="iconDrawTitle">Draw your icon</h2>
+          </div>
+          <button class="icon-button" type="button" data-close="iconDrawModal" aria-label="Close">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+          </button>
+        </header>
+        <p class="icon-draw-copy" id="iconDrawCopy">Draw with your finger or stylus. Width changes affect only your next line and the eraser.</p>
+        <label class="icon-stroke-control" for="iconStrokeWidth">
+          <span>Stroke width</span>
+          <small>Thin</small>
+          <input id="iconStrokeWidth" type="range" min="2" max="8" step="0.5" value="4" />
+          <small>Thick</small>
+          <output id="iconStrokeWidthValue" for="iconStrokeWidth">4</output>
+        </label>
+        <div class="icon-draw-pad"><canvas id="iconDrawCanvas" width="600" height="600" aria-label="Workout icon drawing area"></canvas></div>
+        <div class="icon-draw-tools">
+          <button class="secondary-button" id="undoIconStrokeButton" type="button">Undo</button>
+          <button class="secondary-button" id="redoIconStrokeButton" type="button">Redo</button>
+          <button class="secondary-button" id="clearIconDrawingButton" type="button">Clear</button>
+          <button class="secondary-button" id="eraseIconToolButton" type="button" aria-pressed="false">Erase</button>
+          <button class="primary-button" id="saveIconDrawingButton" type="button">Use drawing</button>
+        </div>
+      </section>
+    </div>
+
+    <div class="modal sheet-modal" id="exercisePickerModal" aria-hidden="true">
+      <div class="modal-backdrop" data-close="exercisePickerModal"></div>
+      <section class="bottom-sheet tall-sheet picker-sheet" role="dialog" aria-modal="true" aria-labelledby="exercisePickerTitle">
+        <div class="sheet-handle"></div>
+        <header class="sheet-header">
+          <div>
+            <p class="eyebrow">EXERCISE LIBRARY</p>
+            <h2 id="exercisePickerTitle">Add exercise</h2>
+          </div>
+          <button class="icon-button" type="button" data-close="exercisePickerModal" aria-label="Close">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+          </button>
+        </header>
+        <div class="search-field">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg>
+          <input id="exerciseSearchInput" type="search" placeholder="Search exercises" />
+        </div>
+        <div class="compact-filter-strip exercise-filter-strip" id="exerciseFilterStrip" aria-label="Exercise filters">
+          <button class="active" type="button" data-exercise-filter="all">All</button>
+          <button type="button" data-exercise-filter="no_equipment">No equipment</button>
+          <button type="button" data-exercise-filter="equipment">Equipment</button>
+          <label class="filter-select-label" for="exerciseGroupFilter"><span>Muscle</span><select id="exerciseGroupFilter" aria-label="Filter exercises by muscle group"></select></label>
+        </div>
+        <div class="exercise-picker-list" id="exercisePickerList"></div>
+      </section>
+    </div>
+
+    <div class="modal sheet-modal" id="settingsModal" aria-hidden="true">
+      <div class="modal-backdrop" data-close="settingsModal"></div>
+      <section class="bottom-sheet full-sheet settings-sheet" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+        <div class="sheet-handle"></div>
+        <header class="sheet-header sticky-sheet-header">
+          <div>
+            <p class="eyebrow">MAKE IT YOURS</p>
+            <h2 id="settingsTitle">Settings</h2>
+          </div>
+          <button class="icon-button" type="button" data-close="settingsModal" aria-label="Close">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+          </button>
+        </header>
+
+        <div class="settings-section">
+          <div class="settings-card progression-setting-card">
+            <button class="setting-row progression-setting-toggle no-border" id="progressionSettingButton" type="button" aria-expanded="false">
+              <div><strong>Progression style</strong><small>The score stays the same. Only its name changes.</small></div>
+              <span><strong id="progressionSettingValue">Training Level</strong><em aria-hidden="true">&#8964;</em></span>
+            </button>
+            <div class="progression-dropdown hidden" id="progressionDropdown">
+              <label for="progressionSelect">Choose how your universal score is represented</label>
+              <select class="select-input" id="progressionSelect"></select>
+              <p id="progressionDescription"></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <div class="settings-section-heading progress-target-heading"><div><h3>Progress target</h3><p>Choose whether ranks describe practical gym strength or progress toward an official record.</p></div></div>
+          <div class="settings-card scoring-mode-card progress-target-card">
+            <div class="segmented wide" id="rankTargetModeSetting">
+              <button type="button" data-value="training">Training levels</button>
+              <button type="button" data-value="world_record">World record</button>
+            </div>
+            <p id="rankTargetModeDescription">Bodyweight-relative training bands drive progression.</p>
+            <details class="scoring-readme">
+              <summary>Which exercises have official records?</summary>
+              <p>Foss Gym uses the absolute men's or women's IPF Open Classic records for competition squat, bench press, and deadlift. It also uses directly comparable untimed Guinness records for consecutive pull-ups, chin-ups, and bodyweight squats when a record exists for the selected comparison profile.</p>
+              <p>World Class is always the final target and only appears when a published comparable metric exists. Timed feats, machine claims, and exercises without universal rules stay on the normal training scale instead of receiving a made-up record.</p>
+            </details>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <div class="settings-section-heading"><div><h3>Score name</h3><p>Choose what the universal score is called throughout the app.</p></div></div>
+          <div class="settings-card score-name-card">
+            <label class="settings-select-label" for="pointLabelSelect">POINT NAME</label>
+            <select class="select-input" id="pointLabelSelect"></select>
+            <label class="custom-point-label hidden" id="customPointLabelWrap" for="customPointLabelInput">
+              <span>Custom name</span>
+              <input class="text-input" id="customPointLabelInput" type="text" maxlength="18" placeholder="Soul studs" />
+            </label>
+            <p id="pointLabelPreview">Example: 5,400 XP</p>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <div class="settings-section-heading"><div><h3>Weighted high scores</h3><p>Choose what qualifies as your weighted record.</p></div></div>
+          <div class="settings-card scoring-mode-card weighted-score-card">
+            <div class="segmented wide" id="weightedScoreModeSetting">
+              <button type="button" data-value="one_rep_max">Actual 1RM</button>
+              <button type="button" data-value="heaviest_set">Heaviest set</button>
+              <button type="button" data-value="estimated_one_rep_max">Estimated 1RM</button>
+            </div>
+            <p id="weightedScoreModeDescription">Heaviest set counts the largest weight you saved at any rep count.</p>
+            <details class="scoring-readme">
+              <summary>Read me: how weighted scores work</summary>
+              <p><strong>Actual 1RM</strong> only counts a weighted set when reps equals 1. Other sets are still saved, but they do not change your high score or rank.</p>
+              <p><strong>Heaviest set</strong> counts the largest weight you saved, no matter how many reps you completed.</p>
+              <p><strong>Estimated 1RM</strong> uses your saved weight and reps with the Epley formula. It is an estimate, not a tested one-rep max.</p>
+              <p>Every mode uses the same saved set history. Changing modes never deletes or rewrites your data.</p>
+              <p>Weighted rank bands are bodyweight-relative community references. Dumbbell exercises marked "total" use both dumbbells together. Machine brands and lever systems differ, so keep the same setup when comparing your own progress.</p>
+            </details>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <div class="settings-section-heading"><div><h3>Accent color</h3><p>Changes buttons, charts, and highlights.</p></div></div>
+          <div class="theme-options" id="themeOptions"></div>
+          <p class="accent-status" id="customAccentStatus">A preset color is active.</p>
+        </div>
+
+        <div class="settings-section">
+          <label class="app-title-field" for="appTitleInput"><span>App title</span><input class="text-input" id="appTitleInput" type="text" maxlength="24" placeholder="Foss Gym" /></label>
+          <div class="settings-section-heading inline app-mark-heading"><div><h3>App mark</h3><p>Pick or draw the symbol beside your title.</p></div><button class="small-primary" id="drawAppMarkButton" type="button">Draw</button></div>
+          <div class="logo-options" id="logoOptions"></div>
+        </div>
+
+        <div class="settings-section">
+          <div class="settings-card">
+            <div class="setting-row">
+              <div><strong>Units</strong><small>All weighted inputs and displays, including grip strength</small></div>
+              <div class="segmented compact" id="unitsSetting">
+                <button type="button" data-value="lb">LB</button>
+                <button type="button" data-value="kg">KG</button>
+              </div>
+            </div>
+            <div class="setting-row">
+              <div><strong>Comparison profile</strong><small id="standardSettingDescription">Used for ranking comparisons</small></div>
+              <div class="segmented compact" id="standardSetting">
+                <button type="button" data-value="male">Male</button>
+                <button type="button" data-value="female">Female</button>
+              </div>
+            </div>
+            <div class="setting-row no-border">
+              <div><strong>Body profile</strong><small>Weight, height, and comparison profile</small></div>
+              <button class="text-button" id="editProfileButton" type="button">Edit</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <div class="settings-section-heading"><div><h3>Weight goal</h3><p>Choose a target weight and the date you want to reach it.</p></div></div>
+          <div class="settings-card">
+            <button class="setting-row no-border weight-goal-launch" id="openWeightGoalButton" type="button">
+              <span><strong id="weightGoalSettingValue">Not set</strong><small id="weightGoalSettingDate">Add a goal to unlock trajectory view</small></span>
+              <em aria-hidden="true">&#8250;</em>
+            </button>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <div class="settings-section-heading"><div><h3>Cardio goals</h3><p>Set a distance or fastest-time target for any cardio activity.</p></div></div>
+          <div class="settings-card">
+            <button class="setting-row no-border weight-goal-launch" id="openCardioGoalSettingsButton" type="button">
+              <span><strong id="cardioGoalSettingValue">No goals set</strong><small id="cardioGoalSettingDate">Add a goal and future date</small></span>
+              <em aria-hidden="true">&#8250;</em>
+            </button>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <div class="settings-section-heading"><div><h3>Proportional targets</h3><p>Compare your latest measurements with a selected classic physique template.</p></div></div>
+          <div class="settings-card proportional-target-launch-card">
+            <button class="setting-row no-border proportional-target-launch" id="openProportionalTargetsButton" type="button">
+              <span><strong id="proportionalTargetSettingName">Golden Ratio / V-Taper</strong><small>Open live targets or create a custom ratio</small></span>
+              <em aria-hidden="true">&#8250;</em>
+            </button>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <div class="settings-section-heading"><div><h3>Training locations</h3><p>Choose the places you use and match their actual equipment.</p></div></div>
+          <div class="settings-location-grid" id="locationSettings"></div>
+          <div class="settings-card equipment-preference-card">
+            <div class="setting-row no-border location-preference-row">
+              <div><strong>Equipment preference</strong><small>Preferred options appear first</small></div>
+              <div class="segmented compact preference-segment" id="equipmentPreferenceSetting">
+                <button type="button" data-value="machines">Machines</button>
+                <button type="button" data-value="free_weights">Free weights</button>
+                <button type="button" data-value="none">Any</button>
+              </div>
+            </div>
+          </div>
+          <p class="location-catalog-note">Planet Fitness and Crunch inventories are typical chain-level catalogs. Equipment varies by club, so edit the list for the location you actually use.</p>
+        </div>
+
+        <div class="settings-section">
+          <div class="settings-section-heading"><div><h3>Workout library</h3><p>Control the small equipment and muscle labels.</p></div></div>
+          <div class="settings-card">
+            <div class="setting-row">
+              <div><strong>Cooldown timer</strong><small>Default duration</small></div>
+              <div class="segmented compact cooldown-setting" id="cooldownTimerSetting">
+                <button type="button" data-value="30">30 sec</button>
+                <button type="button" data-value="60">60 sec</button>
+                <button type="button" data-value="90">90 sec</button>
+              </div>
+            </div>
+            <div class="setting-row">
+              <label for="historyBundleWindow"><strong>History bundles</strong><small>Combine nearby sets into one exercise session</small></label>
+              <select class="compact-select" id="historyBundleWindow">
+                <option value="30">30 minutes</option>
+                <option value="60">1 hour</option>
+                <option value="120">2 hours</option>
+                <option value="240">4 hours</option>
+                <option value="day">Same day</option>
+              </select>
+            </div>
+            <div class="setting-row">
+              <label for="recentTrainingWindow"><strong>Recently trained fade</strong><small>How long muscle-card outlines remain visible</small></label>
+              <select class="compact-select" id="recentTrainingWindow">
+                <option value="3">3 days</option>
+                <option value="7">1 week</option>
+                <option value="10">10 days</option>
+                <option value="14">2 weeks</option>
+                <option value="21">3 weeks</option>
+                <option value="30">30 days</option>
+              </select>
+            </div>
+            <div class="setting-row no-border">
+              <div><strong>Show workout tags</strong><small>Shown on workout cards and exercise results</small></div>
+              <div class="segmented compact" id="showExerciseTagsSetting">
+                <button type="button" data-value="true">ON</button>
+                <button type="button" data-value="false">OFF</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <div class="settings-section-heading inline"><div><h3>Custom exercises</h3><p id="customExerciseCount">0 custom</p></div><button class="small-primary" id="addCustomExerciseButton" type="button">+ Add</button></div>
+          <div class="custom-exercise-list" id="customExerciseList"></div>
+        </div>
+
+        <div class="settings-section">
+          <div class="settings-section-heading"><div><h3>Home and lock-screen controls</h3><p>Dashboard widgets plus a cooldown reset control on your lock screen.</p></div></div>
+          <div class="settings-card widget-help-card">
+            <strong>Add from Android</strong>
+            <p>Long-press an empty area on your home screen, choose Widgets, then find Foss Gym. The picker now names and describes each option. Add multiple Workout widgets and use “Next plan” on each one to choose a different routine.</p>
+            <div class="widget-description-list">
+              <span><b>Dashboard</b><small>Overall rank, points, and tested muscles</small></span>
+              <span><b>Top Stats</b><small>Your three highest-rated exercise scores</small></span>
+              <span><b>Body Metrics</b><small>Weight, BMI, and body-fat snapshot</small></span>
+              <span><b>Workout</b><small>A workout plan with independently selectable routines</small></span>
+              <span><b>Lock-screen timer</b><small>Start a cooldown in an exercise and use Reset from its ongoing Android notification</small></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <div class="settings-section-heading"><div><h3>Your data</h3><p>Back up everything or restore a Foss Gym CSV backup.</p></div></div>
+          <div class="settings-card data-tools-card">
+            <button class="data-action-row" id="exportDataButton" type="button"><span><strong>Export all data</strong><small>Download scores, plans, settings, and measurements</small></span><em>CSV</em></button>
+            <button class="data-action-row" id="importDataButton" type="button"><span><strong>Import data</strong><small>Restore a Foss Gym CSV backup</small></span><em>UPLOAD</em></button>
+            <input id="importCsvInput" type="file" accept=".csv,text/csv" hidden />
+            <p class="data-backup-note">Import replaces the data currently in the app after you confirm it.</p>
+          </div>
+        </div>
+
+        <div class="settings-section settings-about-section">
+          <div class="settings-section-heading"><div><h3>About Foss Gym</h3><p>The reason this app exists and the rules that keep it user-first.</p></div></div>
+          <div class="settings-card data-tools-card">
+            <button class="data-action-row" id="openDeveloperNoteButton" type="button"><span><strong>Why I made Foss Gym</strong><small>A note from Christian, the developer</small></span><em>READ</em></button>
+            <button class="data-action-row" id="openCopyrightButton" type="button"><span><strong>Copyright &amp; redistribution</strong><small>Permissions, privacy rules, and acknowledgements</small></span><em>READ</em></button>
+          </div>
+        </div>
+
+        <button class="donate-button" id="donateButton" type="button">Donate</button>
+        <button class="danger-link" id="resetDataButton" type="button">Reset all app data</button>
+        <p class="privacy-note">No account. No ads. Your data stays on this device.</p>
+      </section>
+    </div>
+
+    <div class="modal sheet-modal" id="proportionalTargetsModal" aria-hidden="true">
+      <div class="modal-backdrop" data-close="proportionalTargetsModal"></div>
+      <section class="bottom-sheet full-sheet proportional-targets-sheet" role="dialog" aria-modal="true" aria-labelledby="proportionalTargetsTitle">
+        <div class="sheet-handle"></div>
+        <header class="sheet-header sticky-sheet-header">
+          <div>
+            <p class="eyebrow">SETTINGS</p>
+            <h2 id="proportionalTargetsTitle">Proportional targets</h2>
+          </div>
+          <button class="icon-button" type="button" data-close="proportionalTargetsModal" aria-label="Back to settings">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+          </button>
+        </header>
+
+        <div class="proportional-target-control-card">
+          <label class="settings-select-label" for="proportionalPhysiqueSelect">TARGET PHYSIQUE</label>
+          <select class="select-input" id="proportionalPhysiqueSelect"></select>
+          <p id="proportionalPhysiqueDescription"></p>
+
+          <div class="mass-bias-heading target-mass-heading">
+            <span>Target mass</span>
+            <strong id="proportionalMassBiasValue">0%</strong>
+            <span id="proportionalTargetWeight">--</span>
+          </div>
+          <div class="target-mass-slider-wrap">
+            <input id="proportionalMassBias" type="range" min="-20" max="50" step="1" value="0" aria-label="Target mass adjustment" />
+            <span class="physique-weight-marker current-weight-marker" id="proportionalCurrentMarker" aria-hidden="true"><i></i><b id="proportionalCurrentMarkerLabel">Current</b></span>
+            <span class="physique-weight-marker" id="proportionalReferenceMarker" aria-hidden="true"><i></i><b id="proportionalReferenceMarkerLabel">Current mass</b></span>
+          </div>
+          <small class="range-scale target-mass-scale"><span id="proportionalMinimumLabel">BMI 18.5</span><span id="proportionalCurrentLabel">CURRENT</span><span id="proportionalMaximumLabel">+50%</span></small>
+          <p class="target-mass-note" id="proportionalTargetBmi">Move the slider to preview measurement targets in real time.</p>
+        </div>
+
+        <div class="section-title-row target-preview-heading">
+          <h3>Live targets</h3>
+          <span>Latest vs target</span>
+        </div>
+        <div class="measurement-grid proportional-preview-grid" id="proportionalPreviewGrid"></div>
+        <p class="tiny-note target-disclaimer">These are optional visual proportion references, not medical or required body-composition goals.</p>
+
+        <div class="section-title-row custom-physique-heading">
+          <div><p class="eyebrow">YOUR TEMPLATES</p><h3>Custom ratios</h3></div>
+          <button class="small-primary" id="addCustomPhysiqueButton" type="button">+ Create</button>
+        </div>
+        <div class="custom-physique-list" id="customPhysiqueList"></div>
+        <p class="tiny-note custom-ratio-backup-note">Custom ratios are included when you export or import all Foss Gym data.</p>
+      </section>
+    </div>
+
+    <div class="modal sheet-modal" id="customPhysiqueModal" aria-hidden="true">
+      <div class="modal-backdrop" data-close="customPhysiqueModal"></div>
+      <section class="bottom-sheet full-sheet custom-physique-sheet" role="dialog" aria-modal="true" aria-labelledby="customPhysiqueTitle">
+        <div class="sheet-handle"></div>
+        <header class="sheet-header sticky-sheet-header">
+          <div>
+            <p class="eyebrow">PROPORTIONAL TARGETS</p>
+            <h2 id="customPhysiqueTitle">Create custom ratio</h2>
+          </div>
+          <button class="icon-button" type="button" data-close="customPhysiqueModal" aria-label="Close">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+          </button>
+        </header>
+        <label class="field-label" for="customPhysiqueName">Template name</label>
+        <input class="text-input" id="customPhysiqueName" type="text" maxlength="40" placeholder="My ideal proportions" />
+        <div class="custom-ratio-explainer">
+          <strong>Every number is multiplied by your waist.</strong>
+          <p>Example: 1.60 means the target circumference is 1.60 times your latest waist measurement.</p>
+        </div>
+        <div class="custom-ratio-grid" id="customRatioGrid">
+          <label><span>BODY FAT</span><div><input type="number" inputmode="decimal" min="1" max="70" step="0.1" value="12" data-custom-body-fat /><em>% target</em></div></label>
+          <label><span>SHOULDERS</span><div><input type="number" inputmode="decimal" min="0.1" max="10" step="0.01" value="1.61" data-custom-ratio="shoulderCm" /><em>× waist</em></div></label>
+          <label><span>CHEST</span><div><input type="number" inputmode="decimal" min="0.1" max="10" step="0.01" value="1.45" data-custom-ratio="chestCm" /><em>× waist</em></div></label>
+          <label><span>NECK</span><div><input type="number" inputmode="decimal" min="0.1" max="10" step="0.01" value="0.48" data-custom-ratio="neckCm" /><em>× waist</em></div></label>
+          <label><span>UPPER ARM</span><div><input type="number" inputmode="decimal" min="0.1" max="10" step="0.01" value="0.50" data-custom-ratio="armCm" /><em>× waist</em></div></label>
+          <label><span>FOREARM</span><div><input type="number" inputmode="decimal" min="0.1" max="10" step="0.01" value="0.42" data-custom-ratio="forearmCm" /><em>× waist</em></div></label>
+          <label><span>WRIST</span><div><input type="number" inputmode="decimal" min="0.1" max="10" step="0.01" value="0.20" data-custom-ratio="wristCm" /><em>× waist</em></div></label>
+          <label><span>HIPS</span><div><input type="number" inputmode="decimal" min="0.1" max="10" step="0.01" value="1.08" data-custom-ratio="hipCm" /><em>× waist</em></div></label>
+          <label><span>THIGH</span><div><input type="number" inputmode="decimal" min="0.1" max="10" step="0.01" value="0.725" data-custom-ratio="thighCm" /><em>× waist</em></div></label>
+          <label><span>CALF</span><div><input type="number" inputmode="decimal" min="0.1" max="10" step="0.01" value="0.50" data-custom-ratio="calfCm" /><em>× waist</em></div></label>
+        </div>
+        <button class="primary-button" id="saveCustomPhysiqueButton" type="button">Save custom ratio</button>
+        <p class="tiny-note">This is an optional visual reference. It is not a medical recommendation.</p>
+      </section>
+    </div>
+
+    <div class="modal sheet-modal equipment-modal" id="equipmentModal" aria-hidden="true">
+      <div class="modal-backdrop" data-close="equipmentModal"></div>
+      <section class="bottom-sheet full-sheet equipment-sheet" role="dialog" aria-modal="true" aria-labelledby="equipmentModalTitle">
+        <div class="sheet-handle"></div>
+        <header class="sheet-header sticky-sheet-header">
+          <div>
+            <p class="eyebrow" id="equipmentModalEyebrow">HOME EQUIPMENT</p>
+            <h2 id="equipmentModalTitle">Choose equipment</h2>
+          </div>
+          <button class="icon-button" type="button" data-close="equipmentModal" aria-label="Close">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+          </button>
+        </header>
+        <p class="equipment-modal-copy" id="equipmentModalCopy">Select the equipment that is actually available here.</p>
+        <button class="no-equipment-choice hidden" id="noEquipmentChoice" type="button" aria-pressed="false">
+          <span aria-hidden="true">&#10003;</span><strong>No equipment</strong><small>Show bodyweight workouts that need no gear</small>
+        </button>
+        <div class="search-field equipment-search-field">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg>
+          <input id="equipmentSearchInput" type="search" placeholder="Search equipment" />
+        </div>
+        <div class="equipment-selection-count" id="equipmentSelectionCount">0 selected</div>
+        <div class="equipment-picker" id="equipmentPicker"></div>
+        <div class="custom-equipment-entry">
+          <label for="customEquipmentInput"><strong>Add other equipment</strong><small>Use the exact name you recognize</small></label>
+          <div><input class="text-input" id="customEquipmentInput" type="text" maxlength="45" placeholder="Example: cable crossover" /><button class="small-primary" id="addOtherEquipmentButton" type="button">Add</button></div>
+        </div>
+        <button class="primary-button" id="saveEquipmentButton" type="button">Save equipment</button>
+      </section>
+    </div>
+
+    <div class="modal sheet-modal" id="colorPickerModal" aria-hidden="true">
+      <div class="modal-backdrop" data-close="colorPickerModal"></div>
+      <section class="bottom-sheet color-picker-sheet" role="dialog" aria-modal="true" aria-labelledby="colorPickerTitle">
+        <div class="sheet-handle"></div>
+        <header class="sheet-header color-picker-header">
+          <div>
+            <label class="mini-hex-input" for="customAccentHex"><span>HEX</span><input id="customAccentHex" type="text" value="#B9F64A" maxlength="7" inputmode="text" autocomplete="off" spellcheck="false" /></label>
+            <p class="eyebrow">SELECT COLOR</p>
+            <h2 id="colorPickerTitle">Custom accent</h2>
+          </div>
+          <button class="icon-button" type="button" data-close="colorPickerModal" aria-label="Close">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+          </button>
+        </header>
+
+        <div class="color-spectrum" id="colorSpectrum" role="slider" aria-label="Saturation and value" aria-valuemin="0" aria-valuemax="100" tabindex="0">
+          <span class="color-spectrum-cursor" id="colorSpectrumCursor"></span>
+        </div>
+
+        <label class="hue-control" for="colorHueSlider">
+          <span>HUE</span>
+          <input id="colorHueSlider" type="range" min="0" max="360" step="1" value="90" />
+        </label>
+
+        <div class="color-picker-readout">
+          <div class="color-preview" id="colorPreview" aria-hidden="true"></div>
+          <div id="colorPickerValues"><span>H 90°</span><span>S 70%</span><span>V 96%</span></div>
+        </div>
+
+        <div class="color-picker-actions">
+          <button class="secondary-button" type="button" data-close="colorPickerModal">Cancel</button>
+          <button class="primary-button" id="saveCustomAccentButton" type="button">Use color</button>
+        </div>
+      </section>
+    </div>
+
+    <div class="modal sheet-modal" id="customExerciseModal" aria-hidden="true">
+      <div class="modal-backdrop" data-close="customExerciseModal"></div>
+      <section class="bottom-sheet tall-sheet" role="dialog" aria-modal="true" aria-labelledby="customExerciseTitle">
+        <div class="sheet-handle"></div>
+        <header class="sheet-header">
+          <div>
+            <p class="eyebrow">EXERCISE LIBRARY</p>
+            <h2 id="customExerciseTitle">Add your own</h2>
+          </div>
+          <button class="icon-button" type="button" data-close="customExerciseModal" aria-label="Close">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+          </button>
+        </header>
+        <label class="field-label" for="customExerciseName">Exercise name</label>
+        <input class="text-input" id="customExerciseName" type="text" maxlength="50" placeholder="My exercise" />
+        <label class="field-label">Muscle groups</label>
+        <div class="custom-muscle-options" id="customExerciseGroups" aria-label="Muscle groups"></div>
+        <p class="custom-muscle-help" id="customExerciseWeighting">Choose one or more. Strength credit is split evenly across the selected muscles.</p>
+        <label class="field-label">Scoring</label>
+        <div class="segmented wide" id="customExerciseType">
+          <button class="active" type="button" data-value="weighted">Weighted load</button>
+          <button type="button" data-value="bodyweight">Bodyweight reps</button>
+        </div>
+        <label class="field-label">Exercise icon</label>
+        <div class="exercise-icon-options" id="customExerciseIcons"></div>
+        <button class="primary-button" id="saveCustomExerciseButton" type="button">Add exercise</button>
+        <p class="tiny-note">Custom rankings blend the selected muscle groups' reference standards. They are estimates.</p>
+      </section>
+    </div>
+
+    <div class="modal sheet-modal" id="measurementModal" aria-hidden="true">
+      <div class="modal-backdrop" data-close="measurementModal"></div>
+      <section class="bottom-sheet tall-sheet" role="dialog" aria-modal="true" aria-labelledby="measurementTitle">
+        <div class="sheet-handle"></div>
+        <header class="sheet-header">
+          <div>
+            <p class="eyebrow">NEW ENTRY</p>
+            <h2 id="measurementTitle">Log measurements</h2>
+          </div>
+          <div class="lift-header-actions">
+            <button class="icon-button" type="button" data-close="measurementModal" aria-label="Close">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+            </button>
+          </div>
+        </header>
+        <div class="measurement-form" id="measurementForm"></div>
+        <button class="primary-button" id="saveMeasurementsButton" type="button">Save measurements</button>
+      </section>
+    </div>
+
+    <div class="modal sheet-modal" id="quickMeasurementModal" aria-hidden="true">
+      <div class="modal-backdrop" data-close="quickMeasurementModal"></div>
+      <section class="bottom-sheet compact-sheet" role="dialog" aria-modal="true" aria-labelledby="quickMeasurementTitle">
+        <div class="sheet-handle"></div>
+        <header class="sheet-header">
+          <div>
+            <p class="eyebrow">UPDATE ONE</p>
+            <h2 id="quickMeasurementTitle">Update measurement</h2>
+          </div>
+          <div class="lift-header-actions">
+            <button class="icon-button" type="button" data-close="quickMeasurementModal" aria-label="Close">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+            </button>
+          </div>
+        </header>
+        <label class="field-label" id="quickMeasurementLabel" for="quickMeasurementInput">Measurement</label>
+        <div class="height-input-wrap quick-measurement-entry">
+          <input id="quickMeasurementInput" type="number" inputmode="decimal" min="0" />
+          <span id="quickMeasurementUnit">IN</span>
+        </div>
+        <p class="measurement-inline-instruction" id="quickMeasurementInstruction">Use the same method every time.</p>
+        <section class="quick-measurement-progress hidden" id="quickMeasurementProgress" aria-live="polite">
+          <div><span>PROPORTIONAL TARGET</span><strong id="quickMeasurementTargetValue">--</strong></div>
+          <div class="measurement-progress-track" id="quickMeasurementProgressTrack" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="quickMeasurementProgressFill"></i></div>
+          <p id="quickMeasurementProgressCopy">Add a value to compare it with your target.</p>
+        </section>
+        <button class="primary-button" id="saveQuickMeasurementButton" type="button">Save update</button>
+        <p class="tiny-note">Only this measurement is added to your log. Your other latest values stay unchanged.</p>
+      </section>
+    </div>
+
+    <div class="modal sheet-modal" id="bodyInfoModal" aria-hidden="true">
+      <div class="modal-backdrop" data-close="bodyInfoModal"></div>
+      <section class="bottom-sheet tall-sheet" role="dialog" aria-modal="true" aria-labelledby="bodyInfoTitle">
+        <div class="sheet-handle"></div>
+        <header class="sheet-header">
+          <div>
+            <p class="eyebrow">BODY INDICATORS</p>
+            <h2 id="bodyInfoTitle">What the numbers mean</h2>
+          </div>
+          <button class="icon-button" type="button" data-close="bodyInfoModal" aria-label="Close">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+          </button>
+        </header>
+        <div class="info-copy">
+          <h3>BMI</h3>
+          <p>BMI uses weight divided by height squared. Foss Gym shows the standard adult categories: underweight, healthy weight, overweight, and obesity classes. It is a screening indicator, not a diagnosis, and it can misrepresent very muscular people.</p>
+          <h3>Tape body-fat estimate</h3>
+          <p>Use a flexible tape while standing relaxed. Measure height without shoes. Measure the neck just below the Adam's apple. For the male comparison profile, measure the waist level with the navel. For the female comparison profile, measure the natural waist and the widest part of the hips.</p>
+          <p>Keep the tape level and snug without compressing the skin. Enter waist, neck, height, and hips when requested. Foss Gym calculates an estimate automatically. A manual body-fat entry overrides it.</p>
+          <p>This is useful for tracking a trend, but it is not as accurate as a professional body-composition assessment.</p>
+        </div>
+        <button class="primary-button" type="button" data-close="bodyInfoModal">Got it</button>
+      </section>
+    </div>
+
+    <div class="modal sheet-modal" id="measurementHistoryModal" aria-hidden="true">
+      <div class="modal-backdrop" data-close="measurementHistoryModal"></div>
+      <section class="bottom-sheet full-sheet measurement-history-sheet" role="dialog" aria-modal="true" aria-labelledby="measurementHistoryTitle">
+        <div class="sheet-handle"></div>
+        <header class="sheet-header sticky-sheet-header">
+          <div>
+            <p class="eyebrow">YOUR BODY</p>
+            <h2 id="measurementHistoryTitle">Measurement history</h2>
+          </div>
+          <button class="icon-button" type="button" data-close="measurementHistoryModal" aria-label="Close">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+          </button>
+        </header>
+        <p class="measurement-history-help">Tap Edit to correct a saved value or its date. Changes update your chart and latest measurements immediately.</p>
+        <div class="measurement-history-list full" id="measurementHistoryList"></div>
+      </section>
+    </div>
+
+    <div class="modal sheet-modal" id="measurementHistoryEditModal" aria-hidden="true">
+      <div class="modal-backdrop" data-close="measurementHistoryEditModal"></div>
+      <section class="bottom-sheet tall-sheet measurement-history-edit-sheet" role="dialog" aria-modal="true" aria-labelledby="measurementHistoryEditTitle">
+        <div class="sheet-handle"></div>
+        <header class="sheet-header">
+          <div>
+            <p class="eyebrow">EDIT ENTRY</p>
+            <h2 id="measurementHistoryEditTitle">Measurement history</h2>
+          </div>
+          <button class="icon-button" type="button" data-close="measurementHistoryEditModal" aria-label="Close">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+          </button>
+        </header>
+        <label class="field-label" for="measurementHistoryDate">Date and time</label>
+        <input class="text-input measurement-history-date" id="measurementHistoryDate" type="datetime-local" />
+        <div class="measurement-form history-edit-form" id="measurementHistoryEditForm"></div>
+        <div class="measurement-history-edit-actions">
+          <button class="primary-button" id="saveMeasurementHistoryEdit" type="button">Save changes</button>
+          <button class="danger-link" id="deleteMeasurementHistoryEntry" type="button">Delete entry</button>
+        </div>
+      </section>
+    </div>
+
+    <div class="modal sheet-modal" id="exerciseInfoModal" aria-hidden="true">
+      <div class="modal-backdrop" data-close="exerciseInfoModal"></div>
+      <section class="bottom-sheet exercise-info-sheet" role="dialog" aria-modal="true" aria-labelledby="exerciseInfoTitle">
+        <div class="sheet-handle"></div>
+        <header class="sheet-header">
+          <div>
+            <p class="eyebrow" id="exerciseInfoGroup">EXERCISE GUIDE</p>
+            <h2 id="exerciseInfoTitle">How to do it</h2>
+          </div>
+          <button class="icon-button" type="button" data-close="exerciseInfoModal" aria-label="Close">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+          </button>
+        </header>
+        <div class="exercise-info-guide-page">
+          <div class="exercise-info-hero">
+            <span class="exercise-info-art" id="exerciseInfoArt"></span>
+            <div>
+              <strong id="exerciseInfoName">Exercise</strong>
+              <p id="exerciseInfoDescription">A short exercise description.</p>
+              <div class="exercise-info-tags" id="exerciseInfoTags"></div>
+            </div>
+          </div>
+          <h3 class="exercise-info-subtitle">How to do it</h3>
+          <ol class="exercise-steps" id="exerciseInfoSteps"></ol>
+          <div class="exercise-form-tip"><strong>FORM CHECK</strong><p id="exerciseInfoTip"></p></div>
+          <p class="exercise-info-swipe-cue">Swipe up for rank targets</p>
+        </div>
+        <section class="exercise-info-rankings" id="exerciseInfoRankSection">
+          <div class="rank-ladder-heading">
+            <div><span>SWIPE UP FOR</span><h3 id="exerciseInfoRankTitle">Ranking targets</h3></div>
+            <p id="exerciseInfoRankCopy">Exact targets for your selected progression.</p>
+          </div>
+          <div class="rank-ladder" id="exerciseInfoRankings"></div>
+        </section>
+      </section>
+    </div>
+
+    <div class="modal sheet-modal" id="infoModal" aria-hidden="true">
+      <div class="modal-backdrop" data-close="infoModal"></div>
+      <section class="bottom-sheet info-sheet" role="dialog" aria-modal="true" aria-labelledby="infoTitle">
+        <div class="sheet-handle"></div>
+        <header class="sheet-header">
+          <div>
+            <p class="eyebrow">HOW IT WORKS</p>
+            <h2 id="infoTitle">Your rank is an estimate.</h2>
+          </div>
+          <button class="icon-button" type="button" data-close="infoModal" aria-label="Close">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+          </button>
+        </header>
+        <div class="info-copy">
+          <h3 id="rankInfoName">Progression style</h3>
+          <p id="rankInfoDescription">Your selected progression style represents the same underlying strength score.</p>
+          <p id="scoreInfoCopy">XP is the universal score underneath every progression style. The scale runs from 0 to 9,900 XP. You can rename it in Settings.</p>
+          <p id="weightedScoreInfoCopy">Weighted movements use the tracking mode selected in Settings. Bodyweight movements use your best clean rep count. Neither is a live leaderboard.</p>
+          <p>Equipment, range of motion, technique, and exercise setup can change the result. Compare your own progress using the same form each time.</p>
+        </div>
+        <button class="primary-button" type="button" data-close="infoModal">Got it</button>
+      </section>
+    </div>
+
+    <div class="modal sheet-modal" id="weightGoalModal" aria-hidden="true">
+      <div class="modal-backdrop" data-close="weightGoalModal"></div>
+      <section class="bottom-sheet compact-sheet weight-goal-sheet" role="dialog" aria-modal="true" aria-labelledby="weightGoalTitle">
+        <div class="sheet-handle"></div>
+        <header class="sheet-header">
+          <div><p class="eyebrow">BODY TARGET</p><h2 id="weightGoalTitle">Weight goal</h2></div>
+          <button class="icon-button" type="button" data-close="weightGoalModal" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+        </header>
+        <div class="weight-goal-current"><span>CURRENT</span><strong id="weightGoalCurrentValue">--</strong></div>
+        <label class="field-label" for="weightGoalInput">Goal weight</label>
+        <div class="height-input-wrap"><input id="weightGoalInput" type="number" inputmode="decimal" min="1" step="0.1" /><span id="weightGoalUnit">LB</span></div>
+        <label class="field-label" for="weightGoalDateInput">Goal date</label>
+        <input class="text-input" id="weightGoalDateInput" type="date" />
+        <p class="weight-goal-preview" id="weightGoalPreview">Choose a target and future date.</p>
+        <button class="primary-button" id="saveWeightGoalButton" type="button">Save weight goal</button>
+        <button class="danger-link" id="clearWeightGoalButton" type="button">Clear weight goal</button>
+      </section>
+    </div>
+
+    <div class="modal sheet-modal" id="measurementDisplayModal" aria-hidden="true">
+      <div class="modal-backdrop" data-close="measurementDisplayModal"></div>
+      <section class="bottom-sheet tall-sheet measurement-display-sheet" role="dialog" aria-modal="true" aria-labelledby="measurementDisplayTitle">
+        <div class="sheet-handle"></div>
+        <header class="sheet-header">
+          <div><p class="eyebrow">MEASUREMENTS</p><h2 id="measurementDisplayTitle">Edit weight display</h2></div>
+          <button class="icon-button" type="button" data-close="measurementDisplayModal" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+        </header>
+        <p class="measurement-display-help">Choose exactly what appears around the weight graph. These settings do not change or delete your measurements.</p>
+        <div class="measurement-display-options" id="measurementDisplayOptions">
+          <button type="button" data-weight-display="currentWeight"><span><strong>Current weight</strong><small>Show the current-weight metric</small></span><i></i></button>
+          <button type="button" data-weight-display="change"><span><strong>Weight difference</strong><small>Use the active graph date range</small></span><i></i></button>
+          <button type="button" data-weight-display="trendline"><span><strong>Trendline</strong><small>Show the calculated weight trend</small></span><i></i></button>
+          <button type="button" data-weight-display="startDate"><span><strong>Start date</strong><small>Show the range's first date</small></span><i></i></button>
+          <button type="button" data-weight-display="endDate"><span><strong>End date</strong><small>Show the range's last or goal date</small></span><i></i></button>
+          <button type="button" data-weight-display="xAxis"><span><strong>X-axis label</strong><small>Show the date-axis label</small></span><i></i></button>
+          <button type="button" data-weight-display="yAxis"><span><strong>Y-axis labels</strong><small>Show weight values beside the graph</small></span><i></i></button>
+          <button type="button" data-weight-display="goalGap"><span><strong>Weight to goal</strong><small>Show how much remains to gain or lose</small></span><i></i></button>
+          <button type="button" data-weight-display="dailyRate"><span><strong>Needed per day</strong><small>Show the daily change required</small></span><i></i></button>
+          <button type="button" data-weight-display="weeklyRate"><span><strong>Needed per week</strong><small>Show the weekly change required</small></span><i></i></button>
+        </div>
+        <button class="primary-button" type="button" data-close="measurementDisplayModal">Done</button>
+      </section>
+    </div>
+
+    <div class="modal sheet-modal" id="cardioGoalModal" aria-hidden="true">
+      <div class="modal-backdrop" data-close="cardioGoalModal"></div>
+      <section class="bottom-sheet tall-sheet cardio-goal-sheet" role="dialog" aria-modal="true" aria-labelledby="cardioGoalTitle">
+        <div class="sheet-handle"></div>
+        <header class="sheet-header">
+          <div><p class="eyebrow">CARDIO TARGET</p><h2 id="cardioGoalTitle">Cardio goal</h2></div>
+          <button class="icon-button" type="button" data-close="cardioGoalModal" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+        </header>
+        <label class="field-label" for="cardioGoalActivitySelect">Activity</label>
+        <select class="select-input" id="cardioGoalActivitySelect"></select>
+        <div id="cardioGoalValueFields"></div>
+        <label class="field-label" for="cardioGoalDateInput">Goal date</label>
+        <input class="text-input" id="cardioGoalDateInput" type="date" />
+        <p class="weight-goal-preview" id="cardioGoalPreview">Choose a target and future date.</p>
+        <button class="primary-button" id="saveCardioGoalButton" type="button">Save cardio goal</button>
+        <button class="danger-link" id="clearCardioGoalButton" type="button">Clear this goal</button>
+      </section>
+    </div>
+
+    <div class="modal sheet-modal" id="donationModal" aria-hidden="true">
+      <div class="modal-backdrop" data-close="donationModal"></div>
+      <section class="bottom-sheet compact-sheet donation-sheet" role="dialog" aria-modal="true" aria-labelledby="donationTitle">
+        <div class="sheet-handle"></div>
+        <header class="sheet-header">
+          <div><p class="eyebrow">KEEP FOSS GYM FREE</p><h2 id="donationTitle">Choose your support</h2></div>
+          <button class="icon-button" type="button" data-close="donationModal" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+        </header>
+        <div class="segmented wide donation-tabs" id="donationTabs">
+          <button class="active" type="button" data-donation-tab="monthly">Monthly donation</button>
+          <button type="button" data-donation-tab="one-time">One-time donation</button>
+        </div>
+        <section class="donation-panel" id="monthlyDonationPanel">
+          <span class="donation-amount-label">MONTHLY SUPPORT</span>
+          <strong id="monthlyDonationAmount">$1.00</strong>
+          <input id="monthlyDonationSlider" type="range" min="0" max="4" step="1" value="2" aria-label="Monthly donation amount" aria-valuetext="$1.00 per month" />
+          <div class="donation-scale" aria-hidden="true"><span>$0.50</span><span>$0.75</span><span>$1</span><span>$3</span><span>$5</span></div>
+          <p>Choose a small monthly amount. Payment opens securely in your browser.</p>
+        </section>
+        <section class="donation-panel hidden" id="oneTimeDonationPanel">
+          <span class="donation-amount-label">ONE-TIME SUPPORT</span>
+          <strong>Choose your own amount</strong>
+          <p>Stripe will let you enter the one-time amount after the page opens in your browser.</p>
+        </section>
+        <button class="primary-button donation-submit-button" id="donationSubmitButton" type="button">Donate $1.00 monthly</button>
+        <p class="tiny-note">Foss Gym does not collect payment data. The selected Stripe page opens outside the app.</p>
+      </section>
+    </div>
+
+    <div class="modal sheet-modal" id="developerNoteModal" aria-hidden="true">
+      <div class="modal-backdrop" data-close="developerNoteModal"></div>
+      <section class="bottom-sheet full-sheet policy-sheet" role="dialog" aria-modal="true" aria-labelledby="developerNoteTitle">
+        <div class="sheet-handle"></div>
+        <header class="sheet-header sticky-sheet-header">
+          <div><p class="eyebrow">A NOTE FROM THE DEV</p><h2 id="developerNoteTitle">Why I made Foss Gym</h2></div>
+          <button class="icon-button" type="button" data-close="developerNoteModal" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+        </header>
+        <div class="policy-copy developer-note-copy">
+          <p>Dear user,</p>
+          <p>Thank you for installing Foss Gym. It genuinely means a lot to me.</p>
+          <p>I made this app because I was frustrated and disappointed with the fitness apps that were already available, including many of the paid ones.</p>
+          <p>Too many apps spy on you. They collect your data. They give you 30 days of great features, then take them away and ask you to pay a subscription. They are often cluttered, unintuitive, and built around keeping you subscribed instead of simply serving you.</p>
+          <p>I wanted something different.</p>
+          <p>I genuinely wanted to lose weight, and I wanted an app that was as simple as possible while still giving me the features I actually needed. No unnecessary complexity. No tracking everything you do. No locking useful features behind a monthly subscription.</p>
+          <p>So I decided to make that app myself.</p>
+          <p>Foss Gym is meant to be feature-rich, simple to use, and available without requiring a subscription. All I ask is that, if you find it useful and you are able to, you consider making a donation.</p>
+          <p>I know building and maintaining something like this is a lot to take on, but I decided it was important enough to do anyway.</p>
+          <p>I hope you enjoy the app. If you have questions, feedback, feature requests, or something you think could be improved, please let me know. I will do my best to consider it for a future update.</p>
+          <p>If Foss Gym has helped you, please consider donating. It means a lot to me personally, and it gives me the ability to spend more time improving the app and making it better for everyone.</p>
+          <p>Finally, shout out to Louis Rossmann and Fulu. Y'all are a major inspiration for this project. I hope more software moves in this direction in the future: built to serve the people using it.</p>
+          <p>Thank you for giving Foss Gym a chance.</p>
+          <p><strong>Christian</strong><br />Developer of Foss Gym</p>
+        </div>
+        <button class="donate-button policy-donate-button" id="developerNoteDonateButton" type="button">Donate to Foss Gym</button>
+      </section>
+    </div>
+
+    <div class="modal sheet-modal" id="copyrightModal" aria-hidden="true">
+      <div class="modal-backdrop" data-close="copyrightModal"></div>
+      <section class="bottom-sheet full-sheet policy-sheet" role="dialog" aria-modal="true" aria-labelledby="copyrightTitle">
+        <div class="sheet-handle"></div>
+        <header class="sheet-header sticky-sheet-header">
+          <div><p class="eyebrow">USER-FIRST SOFTWARE</p><h2 id="copyrightTitle">Copyright &amp; redistribution</h2></div>
+          <button class="icon-button" type="button" data-close="copyrightModal" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+        </header>
+        <div class="policy-copy">
+          <p><strong>Copyright © 2026 Christian, developer of Foss Gym.</strong></p>
+          <p>You may redistribute Foss Gym, including a modified version, only if every condition below remains true:</p>
+          <ul>
+            <li>You cannot run ads in the app.</li>
+            <li>You cannot collect user data or transfer it anywhere outside the person's device.</li>
+            <li>You cannot spy on the user.</li>
+            <li>You cannot connect the app to the internet unless you have Christian's explicit permission.</li>
+            <li>You must include an Acknowledgements page that honestly states how Foss Gym helped your app. If it did not help, the page must say that it did not.</li>
+            <li>You must keep the Donate button and its Foss Gym donation destination.</li>
+          </ul>
+          <h3>Acknowledgements</h3>
+          <p>This is the original Foss Gym build created by Christian. It was inspired in part by the user-first software work of Louis Rossmann and Fulu. No downstream app has contributed to this official build.</p>
+          <p>The Donate buttons are the only intentional internet handoff in this build. They open an approved Stripe donation page in your browser after you tap one. Foss Gym itself has no account, ads, analytics, cloud sync, or background internet connection.</p>
+        </div>
+        <button class="donate-button policy-donate-button" id="copyrightDonateButton" type="button">Donate to Foss Gym</button>
+      </section>
+    </div>
+
+    <div class="confirm-dialog" id="confirmDialog" aria-hidden="true">
+      <div class="confirm-panel">
+        <h3 id="confirmTitle">Are you sure?</h3>
+        <p id="confirmMessage">This action cannot be undone.</p>
+        <div class="confirm-actions">
+          <button class="secondary-button" id="confirmCancel" type="button">Cancel</button>
+          <button class="danger-button" id="confirmOkay" type="button">Delete</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="feedback-banner" id="feedbackBanner" role="status" aria-live="polite"></div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script src="core.js"></script>
+    <script src="equipment.js"></script>
+    <script src="guides.js"></script>
+    <script src="exercise-icons.js"></script>
+    <script src="records.js"></script>
+    <script src="main.js"></script>
+  </body>
+</html>
